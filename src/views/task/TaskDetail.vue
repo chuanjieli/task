@@ -8,7 +8,7 @@
           <br />
           <div>当前任务状态：</div>
           <br />
-          <Steps :current="state" style="position: relative;left: 15%;">
+          <Steps :current="state" :status="status" style="position: relative;left: 15%;">
             <Step title="等待进行" content="在任务队列中等待"></Step>
             <Step :title="title" :content="content"></Step>
             <!-- <Step title="漏洞检测" content="漏洞检测"></Step> -->
@@ -122,6 +122,7 @@ export default {
     return {
       state: 0,
       spinShow: true,
+      status: 'wait',
       timer: null,
       title: '正在扫描',
       content: '正在扫描',
@@ -499,25 +500,31 @@ export default {
         let state = res.data.data.task.state
         if (state === '任务开始') {
           this.state = 0
+          this.status = 'process'
         } else if (state === '任务完成') {
           flag = true
           this.state = 2
+          this.status = 'finish'
         } else {
           this.state = 1
           if (state === '任务运行中') {
             this.title = '任务运行中'
+            this.status = 'process'
           } else if (state === '任务暂停') {
             flag = true
             this.title = '任务暂停'
+            this.status = 'error'
             this.content = '任务暂停'
           } else if (state === '任务撤销') {
             flag = true
             this.title = '任务撤销'
+            this.status = 'error'
             this.content = '任务撤销'
           } else if (state === '任务异常终止') {
             flag = true
             this.title = '任务异常终止'
             this.content = '任务异常终止'
+            this.status = 'error'
           }
         }
         this.task_detail_data.pop()

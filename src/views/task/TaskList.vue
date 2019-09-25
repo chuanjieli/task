@@ -13,7 +13,7 @@
               <Button
                 type="primary"
                 size="small"
-                :disabled="row.state == '任务完成'? true : false"
+                :disabled="row.state == '任务完成' || row.state == '任务撤销'"
                 style="margin-right: 5px"
                 @click="resume(row)"
               >{{row.state == '任务暂停'? '继续' : '暂停'}}</Button>
