@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height:calc(100vh - 84px)">
     <Row :gutter="16">
       <Col span="24">
         <Card :bordered="false">
@@ -120,7 +120,7 @@ export default {
           ) {
             this.timer = setTimeout(() => {
               this.init()
-            }, 5000)
+            }, 3000)
           }
         })
     },
@@ -204,7 +204,7 @@ export default {
   },
   beforeDestroy () {
     this.$once('hook:beforeDestroy', () => {
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
     })
   }
 }

@@ -3,16 +3,19 @@
 import Vue from 'vue'
 import axios from 'axios'
 import router from '../router'
-// import store from '../store'
+import store from '../store'
 import { Message } from 'iview'
 Vue.component('Message', Message)
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
+let BaseUrl = ''
+if (process.env.VUE_APP_URL === 'window.location.origin') {
+  BaseUrl = window.location.origin + '/'
+}
 let config = {
-  baseURL: process.env.VUE_APP_BASE_API || process.env.VUE_APP_URL || '',
+  baseURL: process.env.VUE_APP_BASE_API || BaseUrl || '',
   timeout: 60 * 1000, // Timeout
   withCredentials: true // Check cross-site Access-Control
 }
@@ -21,6 +24,9 @@ const _axios = axios.create(config)
 
 _axios.interceptors.request.use(
   function (config) {
+    config.cancelToken = new axios.CancelToken(function (cancel) {
+      store.commit('pushToken', { cancelToken: cancel })
+    })
     // if (config.method === 'get' && config.url.startsWith('/report/list')) {
     //   store.commit('showSpin', false)
     // } else if (config.method === 'get' && config.url.startsWith('/task/result')) {

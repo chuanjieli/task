@@ -529,7 +529,9 @@ export default {
         }
         this.task_detail_data.pop()
         this.task_detail_data.push(res.data.data.task)
-        this.hosts_data = res.data.data.task.hosts
+        this.hosts_data = res.data.data.task.hosts.sort(function (a, b) {
+          return b.risk_value - a.risk_value
+        })
         this.servicePieData = this.convertData(res.data.data.task.service_types)
         this.vulPieData = this.convertData(res.data.data.task.vul_types)
         if (this.vulPieData.length > 0) {
@@ -541,28 +543,36 @@ export default {
         if (!flag) {
           this.timer = setTimeout(() => {
             this.request()
-          }, 8000)
+          }, 3000)
         }
       })
     },
     convertData (data) {
+      var sortedObjKeys = Object.keys(data).sort(function (a, b) {
+        return data[b] - data[a]
+      })
       let arr = []
-      let num = 0
-      // let val = 0
-      for (let key in data) {
-        if (key !== 'count' && num < 20) {
-          num++
+      for (let i = 1; i < sortedObjKeys.length; i++) {
+        if (i < 21) {
           let obj = {
-            value: data[key],
-            name: key
+            value: data[sortedObjKeys[i]],
+            name: sortedObjKeys[i]
           }
           arr.push(obj)
         }
       }
-      // arr.push({
-      //   value: val,
-      //   name: '其他'
-      // })
+      // let arr = []
+      // let num = 0
+      // for (let key in data) {
+      //   if (key !== 'count' && num < 20) {
+      //     num++
+      //     let obj = {
+      //       value: data[key],
+      //       name: key
+      //     }
+      //     arr.push(obj)
+      //   }
+      // }
       return arr
     },
     initVulPie () {
@@ -643,7 +653,7 @@ export default {
   },
   beforeDestroy () {
     this.$once('hook:beforeDestroy', () => {
-      clearInterval(this.timer)
+      clearTimeout(this.timer)
     })
   }
 }

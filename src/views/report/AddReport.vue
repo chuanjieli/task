@@ -33,6 +33,9 @@
             <Button type="primary" @click="async('formCustom')" style="float:left">生成</Button>
             <Button @click="handleReset('formCustom')" style="margin-left: 8px">重置</Button>
           </FormItem>
+          <br />
+          <br />
+          <br />
         </Form>
       </Card>
     </Col>

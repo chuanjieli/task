@@ -124,25 +124,21 @@ export default {
         callback(new Error('请输入需要扫描的IP'))
       } else {
         var reg = /^[0-9.,-/*]+$/
-        var reg1 = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){2}/
+        var reg1 = /^((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){2}/
         var reg2 = /(\.)[^\1]{3,}\1/g
-        var reg3 = /(\.)[^\1]{4,}\1/g
+        // var reg3 = /(\.)[^\1]{4,}\1/g
         if (reg.test(value)) {
           if (value.indexOf(',') !== -1) {
             let rawIpList = value.split(',')
             for (var i = 0; i < rawIpList.length; i++) {
               if (value.indexOf('-') !== -1) {
-                if (
-                  reg1.test(rawIpList[i]) &&
-                  reg2.test(rawIpList[i]) &&
-                  !reg3.test(rawIpList[i])
-                ) {
+                if (reg1.test(rawIpList[i]) && reg2.test(rawIpList[i])) {
                   callback()
                 } else {
                   callback(new Error('错误的IP'))
                 }
               } else {
-                if (reg1.test(value) && reg2.test(value) && !reg3.test(value)) {
+                if (reg1.test(rawIpList[i]) && reg2.test(rawIpList[i])) {
                   callback()
                 } else {
                   callback(new Error('错误的IP'))
@@ -157,7 +153,7 @@ export default {
                 callback(new Error('错误的IP'))
               }
             } else {
-              if (reg1.test(value) && reg2.test(value) && !reg3.test(value)) {
+              if (reg1.test(value) && reg2.test(value)) {
                 callback()
               } else {
                 callback(new Error('错误的IP'))
@@ -165,7 +161,7 @@ export default {
             }
           }
         } else {
-          callback(new Error('错误的IP'))
+          callback(new Error('存在非法字符'))
         }
       }
     }

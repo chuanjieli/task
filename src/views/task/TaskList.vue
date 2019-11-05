@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height:calc(100vh - 84px)">
     <Row :gutter="16">
       <Col span="24">
         <Card :bordered="false">
@@ -13,12 +13,12 @@
               <Button
                 type="primary"
                 size="small"
-                :disabled="row.state == '任务完成' || row.state == '任务撤销'"
+                :disabled="row.state == '任务完成' || row.state == '任务撤销' || row.state == '任务异常终止'"
                 style="margin-right: 5px"
                 @click="resume(row)"
               >{{row.state == '任务暂停'? '继续' : '暂停'}}</Button>
               <Button
-                :disabled="row.state == '任务撤销' || row.state ==  '任务完成'"
+                :disabled="row.state == '任务撤销' || row.state ==  '任务完成' || row.state == '任务异常终止'"
                 type="primary"
                 size="small"
                 style="margin-right: 5px"
@@ -60,6 +60,7 @@ export default {
   data () {
     return {
       title: '继续',
+      timer: null,
       loading: true,
       paginator: {
         page: 1,
@@ -85,7 +86,7 @@ export default {
           title: '扫描模式',
           key: 'mode',
           align: 'center',
-          minWidth: 200
+          minWidth: 140
         },
         {
           title: '优先级',
@@ -104,10 +105,18 @@ export default {
           key: 'progress',
           width: 200,
           render: (h, params) => {
+            let obj = {
+              任务完成: 'success',
+              任务异常终止: 'wrong',
+              任务撤销: 'wrong',
+              任务运行中: 'active',
+              任务暂停: 'normal'
+            }
+            let status = obj[params.row.state]
             return h('div', [
               h('Progress', {
                 props: {
-                  status: 'active',
+                  status: status,
                   percent: params.row.progress
                 }
               })
@@ -152,6 +161,20 @@ export default {
           this.paginator.pageSize = response.data.data.pageSize
           this.paginator.pageCount = response.data.data.pageCount
           this.paginator.totalCount = response.data.data.totalCount
+          let data = response.data.data.task_list
+          let flag = false
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].state === '任务运行中') {
+              flag = true
+            }
+          }
+          if (flag) {
+            this.timer = setTimeout(() => {
+              this.init()
+            }, 3000)
+          } else {
+            clearTimeout(this.timer)
+          }
         })
     },
     resume (row) {
@@ -228,6 +251,11 @@ export default {
       this.paginator.pageSize = pageSize
       this.init()
     }
+  },
+  beforeDestroy () {
+    this.$once('hook:beforeDestroy', () => {
+      clearTimeout(this.timer)
+    })
   }
 }
 </script>
