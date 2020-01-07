@@ -40,7 +40,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       loading: true,
       timer: null,
@@ -93,11 +93,11 @@ export default {
       report_list_data: []
     }
   },
-  created () {
+  created() {
     this.init()
   },
   methods: {
-    init () {
+    init() {
       this.$axios
         .get(
           '/report/list?page=' +
@@ -124,13 +124,13 @@ export default {
           }
         })
     },
-    show (index) {
+    show(index) {
       this.$Modal.info({
         title: 'User Info',
         content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
       })
     },
-    remove (row) {
+    remove(row) {
       this.$Modal.confirm({
         title: '重要提示',
         content: '<p>确认要删除任务吗？</p>',
@@ -145,12 +145,10 @@ export default {
             }
           })
         },
-        onCancel: () => {
-          this.$Message.info('Clicked cancel')
-        }
+        onCancel: () => {}
       })
     },
-    download (row) {
+    download(row) {
       this.$axios
         .get('/report/download/' + row.id, { responseType: 'arraybuffer' })
         .then(response => {
@@ -161,7 +159,7 @@ export default {
               type: 'application/zip'
             })
             let aTag = document.createElement('a')
-            aTag.download = row.report_name + '报告'
+            aTag.download = row.report_name + '报告.zip'
             aTag.href = URL.createObjectURL(blob1)
             aTag.click()
             URL.revokeObjectURL(aTag.href)
@@ -170,7 +168,7 @@ export default {
               type: 'application/vnd.ms-excel'
             })
             let aTag = document.createElement('a')
-            aTag.download = row.report_name + '报告'
+            aTag.download = row.report_name + '报告.xlsx'
             aTag.href = URL.createObjectURL(blob)
             aTag.click()
             URL.revokeObjectURL(aTag.href)
@@ -190,19 +188,21 @@ export default {
           // }
         })
         .catch(error => {
-          this.$Message.error(error + '')
+          if (error.response.status === 400) {
+            this.$Message.error('报告文件未找到')
+          }
         })
     },
-    pageChange (page) {
+    pageChange(page) {
       this.paginator.page = page
       this.init()
     },
-    pageSizeChange (pageSize) {
+    pageSizeChange(pageSize) {
       this.paginator.pageSize = pageSize
       this.init()
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.$once('hook:beforeDestroy', () => {
       clearTimeout(this.timer)
     })

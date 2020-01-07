@@ -63,13 +63,19 @@ _axios.interceptors.response.use(
         duration: 5,
         closable: true
       })
+      localStorage.removeItem('gm-user')
+      localStorage.removeItem('username')
       router.push('/login')
     } else if (error.response.status === 400) {
-      Message.error({
-        content: error.response.data.reason,
-        duration: 5,
-        closable: true
-      })
+      console.log(error.response)
+
+      if (error.response.data.reason) {
+        Message.error({
+          content: error.response.data.reason,
+          duration: 5,
+          closable: true
+        })
+      }
     } else if (error.response.status >= 500) {
       Message.error({
         content: '服务器忙，请稍后重试',

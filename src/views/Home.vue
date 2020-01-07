@@ -88,6 +88,8 @@ export default {
       console.log(name)
 
       if (name === 'logout') {
+        localStorage.removeItem('gm-user')
+        localStorage.removeItem('username')
         this.$router.push('/login')
       } else {
         this.$router.push('/changepwd')

@@ -61,9 +61,13 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   store.commit('clearToken') // 取消请求
   if (to.path.startsWith('/login')) {
+    // if (localStorage.getItem('gm-user') && localStorage.getItem('username')) {
+    //   next('/tasklist')
+    // } else {
     localStorage.removeItem('gm-user')
     localStorage.removeItem('username')
     next()
+    // }
   } else {
     let token = localStorage.getItem('gm-user')
     if (token === null || token === '') {

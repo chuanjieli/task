@@ -49,6 +49,8 @@ export default {
     const validateReportName = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入报告名称'))
+      } else if (value.length > 20) {
+        callback(new Error('报告名称最长20位'))
       } else {
         callback()
       }
@@ -152,6 +154,10 @@ export default {
                   }, 1000)
 
                   this.$router.push('/reportlist')
+                })
+                .catch(error => {
+                  this.$Modal.remove()
+                  console.log(error)
                 })
             },
             cancelText: '再改改'

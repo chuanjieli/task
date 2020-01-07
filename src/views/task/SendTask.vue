@@ -112,8 +112,8 @@ export default {
     const validateTaskName = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入任务名称'))
-      } else if (value.length > 50) {
-        callback(new Error('任务名称太长'))
+      } else if (value.length > 20) {
+        callback(new Error('任务名称最长20位'))
       } else {
         callback()
       }
@@ -305,6 +305,9 @@ export default {
     },
     handleReset (name) {
       this.$refs[name].resetFields()
+      this.formCustom.mode = 'N'
+      this.formCustom.priority = '1'
+      this.formCustom.port_list = ''
     },
     showCustomPort () {
       this.customPortFlag = this.$data.formCustom.mode === 'C'
